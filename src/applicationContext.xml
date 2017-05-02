@@ -11,4 +11,33 @@
 	http://www.springframework.org/schema/tx 
 	http://www.springframework.org/schema/tx/spring-tx.xsd">
 
+	<!-- 零障碍整合 在Spring配置文件中引入Hibernate的配置文件 -->
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="configLocation" value="classpath:hibernate.cfg.xml" />
+	</bean>
+
+	<!-- 配置Action -->
+	<bean id="bookAction" class="ssh1.test.action.BookAction" scope="prototype">
+		<property name="bookService" ref="bookService" />
+	</bean>
+
+	<!-- Service的配置 -->
+	<bean id="bookService" class="ssh1.test.service.BookService">
+		<property name="bookDao" ref="bookDao" />
+	</bean>
+
+	<!-- DAO的配置 -->
+	<bean id="bookDao" class="ssh1.test.dao.BookDao">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+	<!-- 管理事务 -->
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+	<!-- 注解开启事务 -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
 </beans>
